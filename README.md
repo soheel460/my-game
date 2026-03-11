@@ -1,2 +1,64 @@
 # my-game
 simple browser game
+<!DOCTYPE html>
+<html>
+<head>
+<title>Mini Game</title>
+<style>
+body { text-align:center; font-family:Arial; }
+#player { width:50px; height:50px; background:red; position:absolute; left:50%; bottom:20px; }
+.coin { width:30px; height:30px; background:gold; border-radius:50%; position:absolute; top:0; }
+</style>
+</head>
+<body>
+
+<h1>Catch the Coin</h1>
+<p>Score: <span id="score">0</span></p>
+
+<div id="player"></div>
+
+<script>
+let score = 0;
+let player = document.getElementById("player");
+
+document.addEventListener("keydown", e => {
+  let left = player.offsetLeft;
+  if(e.key === "ArrowLeft") player.style.left = (left - 20) + "px";
+  if(e.key === "ArrowRight") player.style.left = (left + 20) + "px";
+});
+
+function spawnCoin(){
+  let coin = document.createElement("div");
+  coin.className = "coin";
+  coin.style.left = Math.random()*window.innerWidth + "px";
+  document.body.appendChild(coin);
+
+  let fall = setInterval(()=>{
+    coin.style.top = (coin.offsetTop + 5) + "px";
+
+    if(coin.offsetTop > window.innerHeight){
+      coin.remove();
+      clearInterval(fall);
+    }
+
+    let rect1 = coin.getBoundingClientRect();
+    let rect2 = player.getBoundingClientRect();
+
+    if(rect1.left < rect2.right &&
+       rect1.right > rect2.left &&
+       rect1.top < rect2.bottom &&
+       rect1.bottom > rect2.top){
+         score++;
+         document.getElementById("score").textContent = score;
+         coin.remove();
+         clearInterval(fall);
+    }
+
+  },20);
+}
+
+setInterval(spawnCoin,1000);
+</script>
+
+</body>
+</html>
